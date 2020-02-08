@@ -82,9 +82,9 @@ public class AccountSetup extends AppCompatActivity {
         db.collection("Users").document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     //checking if the data even exist on the cloud.
-                    if (task.getResult().exists()){
+                    if (task.getResult().exists()) {
 
                         String name = task.getResult().getString("name");
                         String image = task.getResult().getString("image");
@@ -100,9 +100,9 @@ public class AccountSetup extends AppCompatActivity {
 
                     }
 
-                }else {
+                } else {
                     String error = task.getException().getMessage();
-                    Toast.makeText(AccountSetup.this,"Database Retrieval ERROR:" + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(AccountSetup.this, "Database Retrieval ERROR:" + error, Toast.LENGTH_LONG).show();
                 }
                 settingUpdateProgress.setVisibility(View.INVISIBLE);
                 saveSettingsButton.setEnabled(true);
@@ -139,12 +139,12 @@ public class AccountSetup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String userName = nameText.getText().toString();
-                settingUpdateProgress.setVisibility(View.VISIBLE);
+                //checking if any field are empty.
+                if (!TextUtils.isEmpty(userName) && mainImageUri != null) {
+                    settingUpdateProgress.setVisibility(View.VISIBLE);
 
-                if (isChanged) {
+                    if (isChanged) {
 
-                    //checking if any field are empty.
-                    if (!TextUtils.isEmpty(userName) && mainImageUri != null) {
                         userId = mAuth.getCurrentUser().getUid();
 
                         final StorageReference imagePath = mStorageRef.child("profile_images").child(userId + ".jpg");
@@ -168,36 +168,39 @@ public class AccountSetup extends AppCompatActivity {
                             }
                         });
 
+                    } else {
+                        storeToDatabase(null, userName);
                     }
-                } else {
-                    storeToDatabase(null, userName);
                 }
 
             }
 
         });
     }
-
-    private void storeToDatabase(Uri uri,String userName) {
+    /*
+     database storage task added to separate method to upload data only when it is changed
+     and the method will be called only when the change occur.
+     */
+    private void storeToDatabase(Uri uri, String userName) {
         Uri downloadUri;
         if (uri != null) {
 
             downloadUri = uri;
 
-        }else{
+        } else {
 
             downloadUri = mainImageUri;
 
         }
-        Map<String , String> userMap = new HashMap<>();
-        userMap.put("name",userName);
+        Map<String, String> userMap = new HashMap<>();
+        userMap.put("name", userName);
         userMap.put("image", downloadUri.toString());
         //uploading to database collection.
         db.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
 
                     Toast.makeText(AccountSetup.this, "Settings Updated.", Toast.LENGTH_LONG).show();
                     Intent homeIntent = new Intent(AccountSetup.this, MainActivity.class);

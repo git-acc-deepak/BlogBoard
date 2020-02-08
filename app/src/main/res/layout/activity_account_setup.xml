@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         android:indeterminate="true"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
         app:layout_constraintBottom_toTopOf="@+id/save_setting_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

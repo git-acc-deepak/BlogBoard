@@ -14,4 +14,9 @@
     <string name="profile_image">profile image</string>
     <string name="save_account_settings">Save Account Settings</string>
     <string name="your_name">Your Name</string>
+    <string name="post_description">What\'s happening... </string>
+    <string name="post_image_into_the_feed">post image into the feed</string>
+    <string name="post_button">Post</string>
+    <string name="image_to_be_posted">image to be posted</string>
+    <string name="click_to_add_image">click to add image.</string>
 </resources>
