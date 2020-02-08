@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Blog Board</string>
+    <string name="logo_welcome">welcome logo image.</string>
+    <string name="enter_password">Enter password here</string>
+    <string name="enter_your_email">Enter your email here</string>
+    <string name="need_account_sign_up">Need account? Sign up</string>
+    <string name="login_to_account">Login to Account</string>
+    <string name="action_settings">Account Settings</string>
+    <string name="action_logout">Logout</string>
+    <string name="already_have_an_account_go_to_login">Already have an Account? Go to Login</string>
+    <string name="create_account">Create Account</string>
+    <string name="confirm_password_correct">Confirm Password</string>
+    <string name="title_account_settings">Account Settings</string>
+    <string name="profile_image">profile image</string>
+    <string name="save_account_settings">Save Account Settings</string>
+    <string name="your_name">Your Name</string>
+</resources>
