@@ -48,6 +48,7 @@ public class AccountSetup extends AppCompatActivity {
     private ProgressBar settingUpdateProgress;
     private Uri mainImageUri = null;
     private String userId;
+    private boolean isChanged = false;
 
     private StorageReference mStorageRef;
     private FirebaseAuth mAuth;
@@ -97,8 +98,6 @@ public class AccountSetup extends AppCompatActivity {
 
                         Glide.with(AccountSetup.this).setDefaultRequestOptions(placeHolder).load(image).into(setImage);
 
-                    }else {
-                        Toast.makeText(AccountSetup.this,"Data doesn't exist" , Toast.LENGTH_LONG).show();
                     }
 
                 }else {
@@ -140,63 +139,80 @@ public class AccountSetup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String userName = nameText.getText().toString();
-                //checking if any field are empty.
-                if (!TextUtils.isEmpty(userName) && mainImageUri != null) {
-                    userId = mAuth.getCurrentUser().getUid();
-                    settingUpdateProgress.setVisibility(View.VISIBLE);
+                settingUpdateProgress.setVisibility(View.VISIBLE);
 
-                    final StorageReference imagePath = mStorageRef.child("profile_images").child(userId + ".jpg");
-                    imagePath.putFile(mainImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                if (isChanged) {
+
+                    //checking if any field are empty.
+                    if (!TextUtils.isEmpty(userName) && mainImageUri != null) {
+                        userId = mAuth.getCurrentUser().getUid();
+
+                        final StorageReference imagePath = mStorageRef.child("profile_images").child(userId + ".jpg");
+                        imagePath.putFile(mainImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 //getting the image download URL
                                 imagePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Uri downloadUri = uri;
-                                    Map<String , String> userMap = new HashMap<>();
-                                    userMap.put("name",userName);
-                                    userMap.put("image", downloadUri.toString());
-                                    //uploading to database collection.
-                                    db.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        storeToDatabase(uri, userName);
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                String error = "Ops! Something went wrong. Unable to upload the image at this moment.Please try again later";
+                                Toast.makeText(AccountSetup.this, error, Toast.LENGTH_LONG).show();
+                                settingUpdateProgress.setVisibility(View.INVISIBLE);
+                            }
+                        });
 
-                                            if (task.isSuccessful()){
-
-                                                Toast.makeText(AccountSetup.this, "Settings Updated.", Toast.LENGTH_LONG).show();
-                                                Intent homeIntent = new Intent(AccountSetup.this, MainActivity.class);
-                                                startActivity(homeIntent);
-                                                finish();
-
-                                            } else {
-
-                                                String error = task.getException().getMessage();
-                                                Toast.makeText(AccountSetup.this, "Database ERROR:" + error, Toast.LENGTH_LONG).show();
-
-                                            }
-
-                                            settingUpdateProgress.setVisibility(View.INVISIBLE);
-                                        }
-                                    });
-
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            String error = "Ops! Something went wrong. Unable to upload the image at this moment.Please try again later";
-                            Toast.makeText(AccountSetup.this, error , Toast.LENGTH_LONG).show();
-                            settingUpdateProgress.setVisibility(View.INVISIBLE);
-                        }
-                    });
-
+                    }
+                } else {
+                    storeToDatabase(null, userName);
                 }
-
 
             }
 
+        });
+    }
+
+    private void storeToDatabase(Uri uri,String userName) {
+        Uri downloadUri;
+        if (uri != null) {
+
+            downloadUri = uri;
+
+        }else{
+
+            downloadUri = mainImageUri;
+
+        }
+        Map<String , String> userMap = new HashMap<>();
+        userMap.put("name",userName);
+        userMap.put("image", downloadUri.toString());
+        //uploading to database collection.
+        db.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                if (task.isSuccessful()){
+
+                    Toast.makeText(AccountSetup.this, "Settings Updated.", Toast.LENGTH_LONG).show();
+                    Intent homeIntent = new Intent(AccountSetup.this, MainActivity.class);
+                    startActivity(homeIntent);
+                    finish();
+
+                } else {
+
+                    String error = task.getException().getMessage();
+                    Toast.makeText(AccountSetup.this, "Database ERROR:" + error, Toast.LENGTH_LONG).show();
+
+                }
+
+                settingUpdateProgress.setVisibility(View.INVISIBLE);
+            }
         });
     }
 
@@ -217,6 +233,7 @@ public class AccountSetup extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 mainImageUri = result.getUri();
                 setImage.setImageURI(mainImageUri);
+                isChanged = true;
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
