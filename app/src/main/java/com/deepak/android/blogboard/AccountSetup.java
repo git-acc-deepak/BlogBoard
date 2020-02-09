@@ -162,8 +162,8 @@ public class AccountSetup extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                String error = "Ops! Something went wrong. Unable to upload the image at this moment.Please try again later";
-                                Toast.makeText(AccountSetup.this, error, Toast.LENGTH_LONG).show();
+                                String error = e.getMessage();
+                                Toast.makeText(AccountSetup.this, "Error:" + error , Toast.LENGTH_LONG).show();
                                 settingUpdateProgress.setVisibility(View.INVISIBLE);
                             }
                         });

@@ -20,4 +20,5 @@
     <string name="image_to_be_posted">image to be posted</string>
     <string name="click_to_add_image">click to add image.</string>
     <string name="click_button_to_add_image"><![CDATA[Click To Add Image ->]]></string>
+    <string name="add_new_post_header">Post Something</string>
 </resources>
