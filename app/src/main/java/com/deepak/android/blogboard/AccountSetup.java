@@ -240,6 +240,8 @@ public class AccountSetup extends AppCompatActivity {
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
+                String errorMessage = error.getMessage();
+                Toast.makeText(AccountSetup.this, errorMessage,Toast.LENGTH_LONG).show();
             }
         }
     }
