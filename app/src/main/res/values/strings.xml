@@ -21,4 +21,24 @@
     <string name="click_to_add_image">click to add image.</string>
     <string name="click_button_to_add_image"><![CDATA[Click To Add Image ->]]></string>
     <string name="add_new_post_header">Post Something</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="post_author_name">Deepak</string>
+    <string name="date_of_post">yesterday</string>
+    <string name="post_image_view_holder">post image view holder</string>
+    <string name="random_post_desc_text">roses are #ff0000 violets are #0000ff ladies and gentleman hex code for u, said the hex codes.</string>
+    <string name="post_title_text_view">Post Title</string>
+    <string name="post_title_text">Post Title here...</string>
+    <string name="like_button">like button</string>
+    <string name="_0_likes">0</string>
+    <string name="likes">likes</string>
+    <string name="splash_logo_image">Splash Logo Image</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="search">Search Topic</string>
+    <string name="search_here">Search here</string>
+    <string name="comments">Comments</string>
+    <string name="say_something_nice">Say Something Nice</string>
+    <string name="send_button">send button</string>
+    <string name="loading_comment">Loading Comment...</string>
 </resources>

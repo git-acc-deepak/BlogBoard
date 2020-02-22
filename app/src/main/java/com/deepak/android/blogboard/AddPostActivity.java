@@ -1,6 +1,7 @@
 package com.deepak.android.blogboard;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -30,8 +31,14 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import id.zelory.compressor.Compressor;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -39,6 +46,7 @@ public class AddPostActivity extends AppCompatActivity {
 
     private ImageView choosedImage;
     private EditText newPostDesc;
+    private EditText newPostTitle;
     private Button addNewPost;
     private Uri postImageUri = null;
     private ProgressBar newPostProgress;
@@ -48,6 +56,8 @@ public class AddPostActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
+    private Bitmap compressedImageFile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +65,6 @@ public class AddPostActivity extends AppCompatActivity {
 
         Toolbar newPostToolbar = findViewById(R.id.new_post_toolbar);
         setSupportActionBar(newPostToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
@@ -64,6 +72,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         currentUserId = mAuth.getCurrentUser().getUid();
 
+        newPostTitle = findViewById(R.id.post_title);
         newPostDesc = findViewById(R.id.post_desc);
         addNewPost = findViewById(R.id.add_post_button);
         choosedImage = findViewById(R.id.selected_post_image);
@@ -82,51 +91,97 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String desc = newPostDesc.getText().toString();
+                final String title = newPostTitle.getText().toString();
 
-                if (!TextUtils.isEmpty(desc) && postImageUri != null){
+                if (!TextUtils.isEmpty(desc) && !TextUtils.isEmpty(title) && postImageUri != null) {
 
                     newPostProgress.setVisibility(View.VISIBLE);
 
-                    String randName = FieldValue.serverTimestamp().toString();
+                    final String randName = UUID.randomUUID().toString();
+
                     final StorageReference filePath = mStorageRef.child("post_images").child(randName + ".jpg");
                     filePath.putFile(postImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                           taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                               @Override
-                               public void onSuccess(Uri uri) {
-                                   Uri downloadUri = uri;
-
-                            //database storage task.
-                            Map<String, Object> postMap = new HashMap<>();
-                            postMap.put("image_url", downloadUri.toString());
-                            postMap.put("desc", desc);
-                            postMap.put("user_id", currentUserId);
-                            postMap.put("timestamp", FieldValue.serverTimestamp());
-                            db.collection("Posts").add(postMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Toast.makeText(AddPostActivity.this,
-                                                    "Posted Successfully", Toast.LENGTH_SHORT).show();
-                                    Intent mainIntent = new Intent(AddPostActivity.this, MainActivity.class);
-                                    startActivity(mainIntent);
-                                    finish();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
+                                public void onSuccess(final Uri uri) {
+                                    final String downloadUri = uri.toString();
+                                    File newImageFile = new File(postImageUri.getPath());
+                                    try {
+                                        //thumbnail image size and quality.
+                                        compressedImageFile = new Compressor(AddPostActivity.this)
+                                                .setMaxHeight(100)
+                                                .setMaxWidth(100)
+                                                .setQuality(1)
+                                                .compressToBitmap(newImageFile);
+
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                    byte[] thumbData = baos.toByteArray();
+
+                                    UploadTask uploadTask = mStorageRef
+                                            .child("post_images/thumbs").child(randName + ".jpg")
+                                            .putBytes(thumbData);
+                                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                            taskSnapshot.getStorage().getDownloadUrl()
+                                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    String downloadThumbUri = uri.toString();
+
+                                                    //database storage task.
+                                                    Map<String, Object> postMap = new HashMap<>();
+                                                    postMap.put("image_url", downloadUri);
+                                                    postMap.put("thumbnail", downloadThumbUri);
+                                                    postMap.put("title", title);
+                                                    postMap.put("search", title.toLowerCase());
+                                                    postMap.put("desc", desc);
+                                                    postMap.put("user_id", currentUserId);
+                                                    postMap.put("timestamp", FieldValue.serverTimestamp());
+                                                    db.collection("Posts").add(postMap)
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                    Toast.makeText(AddPostActivity.this,
+                                                                            "Posted Successfully", Toast.LENGTH_SHORT).show();
+                                                                    Intent mainIntent = new Intent(AddPostActivity.this, MainActivity.class);
+                                                                    startActivity(mainIntent);
+                                                                    finish();
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error writing document", e);
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w( TAG, "Error writing document", e);
+                                            String error = e.getMessage();
+                                            Toast.makeText(AddPostActivity.this, "Error:" + error, Toast.LENGTH_LONG).show();
                                         }
+                                    });
+
+                                }
                             });
-                               }
-                           });
                         }
 
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             String error = e.getCause().getMessage();
-                            Toast.makeText(AddPostActivity.this, "Error:" + error , Toast.LENGTH_LONG).show();
+                            Toast.makeText(AddPostActivity.this, "Error:" + error, Toast.LENGTH_LONG).show();
                             newPostProgress.setVisibility(View.INVISIBLE);
                         }
                     });
@@ -135,15 +190,17 @@ public class AddPostActivity extends AppCompatActivity {
             }
         });
     }
+
     //ask user to select image to add to post.
     public void chooseImage() {
 
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setAspectRatio(2, 1)
-                .setMinCropResultSize(512,256)
+                .setMinCropResultSize(512, 256)
                 .start(AddPostActivity.this);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -157,7 +214,7 @@ public class AddPostActivity extends AppCompatActivity {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 String errorMessage = error.getMessage();
-                Toast.makeText(AddPostActivity.this, errorMessage,Toast.LENGTH_LONG).show();
+                Toast.makeText(AddPostActivity.this, errorMessage, Toast.LENGTH_LONG).show();
             }
         }
 

@@ -1,17 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/background"
     tools:context=".RegisterActivity">
+
+    <ProgressBar
+        android:id="@+id/registration_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="top"
+        android:indeterminate="true"
+        android:padding="20dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/logoView"
         android:layout_width="match_parent"
         android:layout_height="221dp"
         android:contentDescription="@string/logo_welcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo_create_account" />
 
     <EditText
@@ -19,64 +39,79 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:layout_below="@+id/logoView"
+        android:layout_margin="16dp"
         android:hint="@string/enter_your_email"
         android:importantForAutofill="no"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoView" />
 
     <EditText
         android:id="@+id/registry_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
         android:ems="10"
-        android:layout_below="@+id/registry_email"
+        android:layout_margin="16dp"
         android:hint="@string/enter_password"
         android:importantForAutofill="no"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registry_email" />
 
     <EditText
         android:id="@+id/confirm_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:layout_below="@+id/registry_password"
+        android:layout_margin="16dp"
         android:hint="@string/confirm_password_correct"
         android:importantForAutofill="no"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registry_password" />
 
     <Button
         android:id="@+id/create_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/confirm_password"
         android:background="@color/colorAccent"
+        android:backgroundTint="@color/colorAccent"
         android:text="@string/create_account"
         android:textAllCaps="false"
-        android:textColor="@android:color/white" />
+        android:layout_margin="16dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirm_password" />
 
     <Button
         android:id="@+id/login_to_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:padding="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:elevation="10dp"
+        android:background="@android:color/transparent"
+        android:layout_margin="16dp"
         android:text="@string/already_have_an_account_go_to_login"
         android:textAllCaps="false"
-        android:background="@android:color/transparent"
-        android:layout_alignParentBottom="true"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create_account" />
 
-    <ProgressBar
-        android:id="@+id/registration_progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:foregroundGravity="top"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/create_account"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="119dp"
-        android:indeterminate="true"
-        android:padding="20dp"
-        android:visibility="invisible" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

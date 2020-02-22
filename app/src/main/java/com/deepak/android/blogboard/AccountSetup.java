@@ -3,6 +3,7 @@ package com.deepak.android.blogboard;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,10 +36,14 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 public class AccountSetup extends AppCompatActivity {
 
@@ -53,6 +58,7 @@ public class AccountSetup extends AppCompatActivity {
     private StorageReference mStorageRef;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private Bitmap compressedImageFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +100,7 @@ public class AccountSetup extends AppCompatActivity {
                         nameText.setText(name);
                         //placeholder until the image is loaded
                         RequestOptions placeHolder = new RequestOptions();
-                        placeHolder.placeholder(R.drawable.profile_picture);
+                        placeHolder.placeholder(R.drawable.post_user_placeholder);
 
                         Glide.with(AccountSetup.this).setDefaultRequestOptions(placeHolder).load(image).into(setImage);
 
@@ -146,13 +152,44 @@ public class AccountSetup extends AppCompatActivity {
                     if (isChanged) {
 
                         userId = mAuth.getCurrentUser().getUid();
+                        File newImageFile = new File(mainImageUri.getPath());
 
-                        final StorageReference imagePath = mStorageRef.child("profile_images").child(userId + ".jpg");
-                        imagePath.putFile(mainImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        try {
+
+
+
+                            compressedImageFile = new Compressor(AccountSetup.this)
+
+                                    .setMaxHeight(125)
+
+                                    .setMaxWidth(125)
+
+                                    .setQuality(50)
+
+                                    .compressToBitmap(newImageFile);
+
+
+
+                        } catch (IOException e) {
+
+                            e.printStackTrace();
+
+                        }
+
+
+
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                        compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                        byte[] thumbData = baos.toByteArray();
+
+                        final UploadTask uploadTask = mStorageRef.child("profile_images").child(userId + ".jpg").putBytes(thumbData);
+                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 //getting the image download URL
-                                imagePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         storeToDatabase(uri, userName);

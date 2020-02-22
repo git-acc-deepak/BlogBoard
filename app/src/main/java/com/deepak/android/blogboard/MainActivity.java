@@ -10,9 +10,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,26 +27,78 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FloatingActionButton fab;
     private FirebaseFirestore db;
-    private  String currentUserId;
+    private String currentUserId;
+    private BottomNavigationView  bottomNavigationView;
+    private HomeFragment homeFragment;
+    private SearchFragment searchFragment;
+    private NotificationsFragment notificationsFragment;
+    private AccountFragment accountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // to load default fragment when the activity starts.
+        changeFragments(new HomeFragment());
 
         mAuth = FirebaseAuth.getInstance();
-        Toolbar mainToolbar = findViewById(R.id.main_toolbar);
         db = FirebaseFirestore.getInstance();
 
+        final Toolbar mainToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addPostIntent = new Intent(MainActivity.this,AddPostActivity.class);
-                startActivity(addPostIntent);
-            }
-        });
+
+        if (mAuth.getCurrentUser() != null) {
+            bottomNavigationView = findViewById(R.id.bottom_nav);
+
+            /**
+             * Fragments initialization
+             */
+
+            homeFragment = new HomeFragment();
+            notificationsFragment = new NotificationsFragment();
+            searchFragment = new SearchFragment();
+            accountFragment = new AccountFragment();
+
+            /* changeFragments(homeFragment);*/
+            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+                    switch (menuItem.getItemId()) {
+                        case R.id.action_home:
+                            changeFragments(homeFragment);
+                            mainToolbar.setTitle("Blog Board");
+                            getSupportFragmentManager().popBackStackImmediate();
+                            return true;
+
+                        case R.id.action_search:
+                            mainToolbar.setTitle("Search");
+                            changeFragments(searchFragment);
+                            return true;
+
+                        case R.id.action_notification:
+                            mainToolbar.setTitle("Notifications");
+                            changeFragments(notificationsFragment);
+                            return true;
+
+                        case R.id.bottom_action_account:
+                            mainToolbar.setTitle("Account");
+                            changeFragments(accountFragment);
+                            return true;
+                    }
+                    return false;
+                }
+            });
+
+            fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent addPostIntent = new Intent(MainActivity.this, AddPostActivity.class);
+                    startActivity(addPostIntent);
+                }
+            });
+        }
     }
 
     @Override
@@ -120,5 +175,16 @@ public class MainActivity extends AppCompatActivity {
         Intent loginIntent = new Intent(MainActivity.this , LoginActivity.class);
         startActivity(loginIntent);
         finish();
+    }
+
+    /**
+     * method changeFragments defines the transactions bw different fragments on home Page
+     * like the home ,accounts, notification etc.
+     * @param fragment bottom navigation fragments
+     */
+    private void changeFragments(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment);
+        fragmentTransaction.commit();
     }
 }
