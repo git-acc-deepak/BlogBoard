@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -27,7 +26,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -48,7 +49,8 @@ import id.zelory.compressor.Compressor;
 public class AccountSetup extends AppCompatActivity {
 
     private CircleImageView setImage;
-    private EditText nameText;
+    private TextInputEditText nameText;
+    private TextInputEditText bioText;
     private Button saveSettingsButton;
     private ProgressBar settingUpdateProgress;
     private Uri mainImageUri = null;
@@ -69,11 +71,14 @@ public class AccountSetup extends AppCompatActivity {
         setSupportActionBar(accountSettingsToolbar);
 
         mAuth = FirebaseAuth.getInstance();
-        userId = mAuth.getCurrentUser().getUid();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userId = user.getUid();
+        }
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
 
-
+        bioText = findViewById(R.id.user_bio);
         setImage = findViewById(R.id.profile_image);
         nameText = findViewById(R.id.name_text);
         saveSettingsButton = findViewById(R.id.save_setting_button);
@@ -92,17 +97,22 @@ public class AccountSetup extends AppCompatActivity {
                     //checking if the data even exist on the cloud.
                     if (task.getResult().exists()) {
 
+                        String bio = task.getResult().getString("bio");
                         String name = task.getResult().getString("name");
                         String image = task.getResult().getString("image");
 
                         mainImageUri = Uri.parse(image);
 
                         nameText.setText(name);
+                        bioText.setText(bio);
                         //placeholder until the image is loaded
                         RequestOptions placeHolder = new RequestOptions();
                         placeHolder.placeholder(R.drawable.post_user_placeholder);
 
-                        Glide.with(AccountSetup.this).setDefaultRequestOptions(placeHolder).load(image).into(setImage);
+                        Glide.with(AccountSetup.this).setDefaultRequestOptions(placeHolder)
+                                .asBitmap()
+                                .load(image)
+                                .into(setImage);
 
                     }
 
@@ -145,13 +155,13 @@ public class AccountSetup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String userName = nameText.getText().toString();
+                final String userBio = bioText.getText().toString();
                 //checking if any field are empty.
-                if (!TextUtils.isEmpty(userName) && mainImageUri != null) {
+                if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userBio) && mainImageUri != null) {
                     settingUpdateProgress.setVisibility(View.VISIBLE);
 
                     if (isChanged) {
 
-                        userId = mAuth.getCurrentUser().getUid();
                         File newImageFile = new File(mainImageUri.getPath());
 
                         try {
@@ -192,7 +202,7 @@ public class AccountSetup extends AppCompatActivity {
                                 taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        storeToDatabase(uri, userName);
+                                        storeToDatabase(uri, userName, userBio);
                                     }
                                 });
                             }
@@ -206,7 +216,7 @@ public class AccountSetup extends AppCompatActivity {
                         });
 
                     } else {
-                        storeToDatabase(null, userName);
+                        storeToDatabase(null, userName, userBio);
                     }
                 }
 
@@ -218,7 +228,7 @@ public class AccountSetup extends AppCompatActivity {
      database storage task added to separate method to upload data only when it is changed
      and the method will be called only when the change occur.
      */
-    private void storeToDatabase(Uri uri, String userName) {
+    private void storeToDatabase(Uri uri, String userName ,String userBio) {
         Uri downloadUri;
         if (uri != null) {
 
@@ -231,6 +241,7 @@ public class AccountSetup extends AppCompatActivity {
         }
         Map<String, String> userMap = new HashMap<>();
         userMap.put("name", userName);
+        userMap.put("bio", userBio);
         userMap.put("image", downloadUri.toString());
         //uploading to database collection.
         db.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -282,4 +293,5 @@ public class AccountSetup extends AppCompatActivity {
             }
         }
     }
+
 }

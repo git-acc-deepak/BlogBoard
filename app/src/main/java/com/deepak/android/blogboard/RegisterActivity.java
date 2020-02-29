@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -14,17 +13,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText emailField;
-    private EditText passField;
-    private EditText confirmPass;
-    private Button returnToLogin;
-    private Button createAccount;
+    private TextInputEditText emailField;
+    private TextInputEditText passField;
+    private TextInputEditText confirmPass;
     private ProgressBar regProgress;
     private FirebaseAuth mAuth;
 
@@ -40,8 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
         emailField = findViewById(R.id.registry_email);
         passField = findViewById(R.id.registry_password);
         confirmPass = findViewById(R.id.confirm_password);
-        createAccount = findViewById(R.id.create_account);
-        returnToLogin = findViewById(R.id.login_to_account);
+        Button createAccount = findViewById(R.id.create_account);
+        Button returnToLogin = findViewById(R.id.login_to_account);
         regProgress = findViewById(R.id.registration_progress);
 
         returnToLogin.setOnClickListener(new View.OnClickListener() {

@@ -1,11 +1,22 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:screenOrientation">portrait</item>
+    </style>
+
+    <!-- Custom text field design-->
+    <style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="hintTextColor">@color/colorAccent</item>
+        <item name="endIconTint">@color/colorAccent</item>
+        <item name="boxStrokeColor">@color/colorAccent</item>
+        <item name="android:layout_margin">@dimen/activity_horizontal_margin</item>
     </style>
 
 </resources>

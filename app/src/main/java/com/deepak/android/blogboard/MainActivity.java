@@ -2,6 +2,7 @@ package com.deepak.android.blogboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,13 +10,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,11 +25,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
-    private FloatingActionButton fab;
     private FirebaseFirestore db;
-    private String currentUserId;
-    private BottomNavigationView  bottomNavigationView;
     private HomeFragment homeFragment;
     private SearchFragment searchFragment;
     private NotificationsFragment notificationsFragment;
@@ -44,13 +43,15 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        final Toolbar mainToolbar = findViewById(R.id.main_toolbar);
-        setSupportActionBar(mainToolbar);
+
+     /*   final Toolbar mainToolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(mainToolbar);*/
 
         if (mAuth.getCurrentUser() != null) {
-            bottomNavigationView = findViewById(R.id.bottom_nav);
+            BottomAppBar mBottomAppBar = findViewById(R.id.bottom_nav);
+            setSupportActionBar(mBottomAppBar);
 
-            /**
+            /*
              * Fragments initialization
              */
 
@@ -59,38 +60,19 @@ public class MainActivity extends AppCompatActivity {
             searchFragment = new SearchFragment();
             accountFragment = new AccountFragment();
 
-            /* changeFragments(homeFragment);*/
-            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            mBottomAppBar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-                    switch (menuItem.getItemId()) {
-                        case R.id.action_home:
-                            changeFragments(homeFragment);
-                            mainToolbar.setTitle("Blog Board");
-                            getSupportFragmentManager().popBackStackImmediate();
-                            return true;
-
-                        case R.id.action_search:
-                            mainToolbar.setTitle("Search");
-                            changeFragments(searchFragment);
-                            return true;
-
-                        case R.id.action_notification:
-                            mainToolbar.setTitle("Notifications");
-                            changeFragments(notificationsFragment);
-                            return true;
-
-                        case R.id.bottom_action_account:
-                            mainToolbar.setTitle("Account");
-                            changeFragments(accountFragment);
-                            return true;
-                    }
-                    return false;
+                public void onClick(View v) {
+                    Log.w(TAG,"navigation icon clicked");
+                    BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new
+                            BottomNavigationDrawerFragment();
+                    bottomNavigationDrawerFragment
+                            .show(getSupportFragmentManager(),bottomNavigationDrawerFragment.getTag());
                 }
             });
 
-            fab = findViewById(R.id.fab);
+
+            FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -104,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        /**
+        /*
          * checking if the user has already signed in else promote to login Activity.
          * else checks if the account is completely setup and promote user to settings page.
          */
@@ -112,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null){
          sendToLogin();
         }else {
-            currentUserId = mAuth.getCurrentUser().getUid();
+            String currentUserId = mAuth.getCurrentUser().getUid();
             db.collection("Users").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -143,32 +125,36 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.bottom_navigation, menu);
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_logout:
-                logout();
-                return true;
-            case R.id.action_settings:
-                Intent settings = new Intent(MainActivity.this,AccountSetup.class);
-                startActivity(settings);
+        switch (item.getItemId()) {
+
+            case R.id.action_home:
+                changeFragments(homeFragment);
+                getSupportFragmentManager().popBackStackImmediate();
                 return true;
 
-                default:
-                    return false;
+            case R.id.action_search:
+                changeFragments(searchFragment);
+                return true;
+
+            case R.id.action_notification:
+                changeFragments(notificationsFragment);
+                return true;
+
+            case R.id.bottom_action_account:
+                changeFragments(accountFragment);
+                return true;
+
+            default: return false;
         }
 
-    }
-
-    private void logout() {
-        mAuth.signOut();
-        sendToLogin();
     }
 
     private void sendToLogin() {
@@ -183,8 +169,14 @@ public class MainActivity extends AppCompatActivity {
      * @param fragment bottom navigation fragments
      */
     private void changeFragments(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment);
-        fragmentTransaction.commit();
+        String backStackName = fragment.getClass().getName();
+        FragmentManager manager = getSupportFragmentManager();
+        boolean fragmentPopped = manager.popBackStackImmediate(backStackName, 0);
+        if (!fragmentPopped){
+            FragmentTransaction fragmentTransaction = manager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment);
+            fragmentTransaction.addToBackStack(backStackName);
+            fragmentTransaction.commit();
+        }
     }
 }

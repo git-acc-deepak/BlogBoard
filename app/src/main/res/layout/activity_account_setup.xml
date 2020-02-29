@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/splash_background"
     tools:context=".AccountSetup">
 
     <ProgressBar
@@ -43,29 +43,33 @@
         android:layout_height="150dp"
         android:layout_marginTop="20dp"
         android:src="@drawable/post_user_placeholder"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_setup_toolbar" />
 
-    <EditText
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/name_text_layout"
+    style="@style/AppTextField"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/profile_image" >
+
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/name_text"
-        android:importantForAutofill="no"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:ems="10"
-        android:layout_margin="16dp"
-        android:textColorHint="@color/white"
         android:textColor="@color/colorAccent"
+        android:textColorHint="@color/white"
+        android:layout_gravity="end"
         android:hint="@string/your_name"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+        android:importantForAutofill="no"
+        android:inputType="textPersonName" />
+
+</com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/save_setting_button"
@@ -79,5 +83,29 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/AppTextField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_text_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/user_bio"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/white"
+            android:ems="10"
+            android:hint="@string/bio"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:maxLength="80"
+            android:layout_gravity="end" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

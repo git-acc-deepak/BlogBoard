@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/splash_background"
     tools:context=".RegisterActivity">
 
     <ProgressBar
@@ -26,7 +26,7 @@
     <ImageView
         android:id="@+id/logoView"
         android:layout_width="match_parent"
-        android:layout_height="221dp"
+        android:layout_height="180dp"
         android:contentDescription="@string/logo_welcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -34,53 +34,71 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo_create_account" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/registry_email_layout"
+        style="@style/AppTextField"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoView" >
+
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/registry_email"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:ems="10"
-        android:layout_margin="16dp"
+        android:textColor="@color/colorAccent"
         android:hint="@string/enter_your_email"
         android:importantForAutofill="no"
-        android:inputType="textEmailAddress"
-        android:textColor="@color/colorAccent"
-        android:textColorHint="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logoView" />
+        android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/registry_password"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/registry_password_layout"
+        style="@style/AppTextField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="password_toggle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.242"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registry_email_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/registry_password"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:textColor="@color/colorAccent"
+            android:hint="@string/enter_password"
+            android:importantForAutofill="no"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
-        android:ems="10"
-        android:layout_margin="16dp"
-        android:hint="@string/enter_password"
-        android:importantForAutofill="no"
-        android:inputType="textPassword"
-        android:textColor="@color/colorAccent"
-        android:textColorHint="@color/white"
+        app:endIconMode="password_toggle"
+        style="@style/AppTextField"
+        android:id= "@+id/confirm_password_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registry_email" />
+        app:layout_constraintTop_toBottomOf="@+id/registry_password_layout">
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/confirm_password"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:ems="10"
-        android:layout_margin="16dp"
+        android:textColor="@color/colorAccent"
         android:hint="@string/confirm_password_correct"
         android:importantForAutofill="no"
-        android:inputType="textPassword"
-        android:textColor="@color/colorAccent"
-        android:textColorHint="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registry_password" />
+        android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/create_account"
@@ -94,7 +112,7 @@
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirm_password" />
+        app:layout_constraintTop_toBottomOf="@+id/confirm_password_layout" />
 
     <Button
         android:id="@+id/login_to_account"

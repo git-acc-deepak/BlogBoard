@@ -36,7 +36,6 @@ public class HomeFragment extends Fragment {
     private RecyclerView listView;
     private List<BlogPostModel> blogList;
     private List<User> userList;
-
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private PostAdapter blogRecyclerAdapter;
@@ -61,8 +60,8 @@ public class HomeFragment extends Fragment {
         //to recycle view list using recycler listView.
         listView = view.findViewById(R.id.list_view);
 
-        blogRecyclerAdapter = new PostAdapter(blogList, userList);
-        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        blogRecyclerAdapter = new PostAdapter( userList, blogList );
+        listView.setLayoutManager(new LinearLayoutManager(getContext()));
         listView.setAdapter(blogRecyclerAdapter);
         listView.setHasFixedSize(true);
 
@@ -76,12 +75,11 @@ public class HomeFragment extends Fragment {
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     boolean reachedLast = !recyclerView.canScrollVertically(1);
-
                     if (reachedLast){
-                        Toast.makeText(container.getContext() , "Viewing Older Posts" , Toast.LENGTH_SHORT).show();
                         loadMoreBlog();
                     }
                 }
+
             });
         /*
         retrieving data from the database on fire store.
@@ -189,6 +187,8 @@ public class HomeFragment extends Fragment {
                             });
                         }
                     }
+                } else {
+                    Toast.makeText(getContext(),"That is all we have right now",Toast.LENGTH_SHORT).show();
                 }
             }
         });

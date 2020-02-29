@@ -16,7 +16,7 @@
     <string name="your_name">Your Name</string>
     <string name="post_description">What\'s happening... </string>
     <string name="post_image_into_the_feed">post image into the feed</string>
-    <string name="post_button">Post</string>
+    <string name="post_button">Publish</string>
     <string name="image_to_be_posted">image to be posted</string>
     <string name="click_to_add_image">click to add image.</string>
     <string name="click_button_to_add_image"><![CDATA[Click To Add Image ->]]></string>
@@ -41,4 +41,15 @@
     <string name="say_something_nice">Say Something Nice</string>
     <string name="send_button">send button</string>
     <string name="loading_comment">Loading Comment...</string>
+    <string name="delete">Delete</string>
+    <string name="bio">no bio yet</string>
+    <string name="user_name">User Name</string>
+    <string name="edit_account_settings">edit account settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="home">Home</string>
+    <string name="user_email_com">user@email.com</string>
+    <string name="drawer_close_button">drawer close button</string>
+    <string name="edit_button">edit button</string>
+    <string name="user_image">user image</string>
+    <string name="delete_post">Sure you want to delete this post?</string>
 </resources>

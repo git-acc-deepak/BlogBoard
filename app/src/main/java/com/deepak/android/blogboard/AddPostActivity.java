@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -21,7 +20,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,16 +46,14 @@ public class AddPostActivity extends AppCompatActivity {
     private static final String TAG = "AddPostActivity";
 
     private ImageView choosedImage;
-    private EditText newPostDesc;
-    private EditText newPostTitle;
-    private Button addNewPost;
+    private TextInputEditText newPostDesc;
+    private TextInputEditText newPostTitle;
     private Uri postImageUri = null;
     private ProgressBar newPostProgress;
     private String currentUserId;
 
     private StorageReference mStorageRef;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
 
     private Bitmap compressedImageFile;
 
@@ -68,13 +67,16 @@ public class AddPostActivity extends AppCompatActivity {
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-        currentUserId = mAuth.getCurrentUser().getUid();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            currentUserId = user.getUid();
+        }
 
         newPostTitle = findViewById(R.id.post_title);
         newPostDesc = findViewById(R.id.post_desc);
-        addNewPost = findViewById(R.id.add_post_button);
+        Button addNewPost = findViewById(R.id.add_post_button);
         choosedImage = findViewById(R.id.selected_post_image);
         newPostProgress = findViewById(R.id.new_post_progress);
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/app_background"
     tools:context=".AddPostActivity">
 
     <ProgressBar
@@ -36,47 +36,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/post_desc"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/post_desc_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:backgroundTint="@color/colorAccent"
-        android:ems="10"
-        android:hint="@string/post_description"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine"
-        android:maxLength="500"
-        android:textColor="@color/colorAccent"
-        android:textColorHint="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_height="103dp"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/add_images_to_post"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_title" />
+        app:layout_constraintTop_toBottomOf="@+id/post_title_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/post_desc"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:ems="10"
+            android:hint="@string/post_description"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:maxLength="500"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <ImageButton
         android:id="@+id/add_images_to_post"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_margin="16dp"
         android:contentDescription="@string/click_to_add_image"
         android:src="@drawable/ic_image_icon_24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_desc" />
+        app:layout_constraintBottom_toBottomOf="@+id/post_desc_layout"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/selected_post_image"
         android:layout_width="0dp"
         android:layout_height="188dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/image_to_be_posted"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_images_to_post" />
+        app:layout_constraintTop_toBottomOf="@+id/post_desc_layout" />
 
     <Button
         android:id="@+id/add_post_button"
@@ -91,21 +95,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selected_post_image" />
 
-    <EditText
-        android:id="@+id/post_title"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/colorAccent"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="@string/post_title_text"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        android:maxLength="100"
-        android:textColor="@color/colorAccent"
-        android:textColorHint="@color/white"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/post_title_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_post_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/new_post_toolbar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/post_title"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/post_title_text"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:maxLength="100"
+            android:textColor="@color/colorAccent" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

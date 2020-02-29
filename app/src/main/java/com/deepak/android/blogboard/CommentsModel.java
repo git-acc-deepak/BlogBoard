@@ -15,6 +15,7 @@ public class CommentsModel {
         this.timestamp = timestamp;
     }
 
+
     public String getMessage() {
         return message;
     }
@@ -27,5 +28,15 @@ public class CommentsModel {
         return timestamp;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 }
