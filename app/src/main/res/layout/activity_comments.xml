@@ -96,25 +96,19 @@
                     android:id="@+id/is_the_post_liked"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="25"
+                    android:layout_weight="50"
                     android:contentDescription="@string/like_button"
                     android:src="@drawable/ic_like_button" />
 
-                <ImageView
-                    android:id="@+id/edit_the_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="50"
-                    android:contentDescription="@string/edit_button"
-                    android:src="@drawable/ic_edit_white_24dp" />
 
                 <ImageView
                     android:id="@+id/delete_this_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="25"
+                    android:layout_weight="50"
                     android:contentDescription="@string/delete"
-                    android:src="@drawable/ic_delete_black_24dp" />
+                    android:src="@drawable/ic_delete_black_24dp"
+                    android:visibility="invisible" />
 
             </LinearLayout>
 

@@ -58,7 +58,6 @@ public class AccountSetup extends AppCompatActivity {
     private boolean isChanged = false;
 
     private StorageReference mStorageRef;
-    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private Bitmap compressedImageFile;
 
@@ -70,7 +69,6 @@ public class AccountSetup extends AppCompatActivity {
         Toolbar accountSettingsToolbar = findViewById(R.id.account_setup_toolbar);
         setSupportActionBar(accountSettingsToolbar);
 
-        mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             userId = user.getUid();

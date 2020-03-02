@@ -169,14 +169,10 @@ public class MainActivity extends AppCompatActivity {
      * @param fragment bottom navigation fragments
      */
     private void changeFragments(Fragment fragment){
-        String backStackName = fragment.getClass().getName();
         FragmentManager manager = getSupportFragmentManager();
-        boolean fragmentPopped = manager.popBackStackImmediate(backStackName, 0);
-        if (!fragmentPopped){
             FragmentTransaction fragmentTransaction = manager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment);
-            fragmentTransaction.addToBackStack(backStackName);
-            fragmentTransaction.commit();
-        }
+            fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment)
+            .addToBackStack(null)
+            .commit();
     }
 }

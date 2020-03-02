@@ -12,6 +12,11 @@
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/action_settings" />
         <item
+            android:id="@+id/action_feedback"
+            android:icon="@drawable/ic_feedback_black_24dp"
+            android:title="@string/feedback"/>
+
+        <item
             android:id="@+id/action_logout"
             android:icon="@drawable/ic_logout_24dp"
             android:title="@string/action_logout" />

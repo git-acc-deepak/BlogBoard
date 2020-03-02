@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class CommentsModel {
 
-    private String message, user_id;
-    private Date timestamp;
+    public String message, user_id;
+    public Date timestamp;
 
     public  CommentsModel(){}
 

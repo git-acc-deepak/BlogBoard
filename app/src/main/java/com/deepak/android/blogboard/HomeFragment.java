@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment {
         //to recycle view list using recycler listView.
         listView = view.findViewById(R.id.list_view);
 
-        blogRecyclerAdapter = new PostAdapter( userList, blogList );
+        blogRecyclerAdapter = new PostAdapter(getContext(), userList, blogList );
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
         listView.setAdapter(blogRecyclerAdapter);
         listView.setHasFixedSize(true);

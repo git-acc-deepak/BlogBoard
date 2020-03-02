@@ -57,6 +57,11 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                         Intent settingIntent = new Intent(getContext(),AccountSetup.class);
                         startActivity(settingIntent);
                         return true;
+
+                    case R.id.action_feedback:
+                        Intent feedback = new Intent(getContext(),FeedbackActivity.class);
+                        startActivity(feedback);
+                        return true;
                 }
                 return false;
             }

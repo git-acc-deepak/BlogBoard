@@ -104,6 +104,13 @@
                         android:contentDescription="@string/like_button"
                         app:srcCompat="@drawable/ic_like_button" />
 
+                    <TextView
+                        android:id="@+id/like_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="25"
+                        android:text="@string/_0_likes" />
+
 
                     <ImageView
                         android:contentDescription="@string/comments"
@@ -113,23 +120,12 @@
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_comment_black_24dp" />
 
-                    <ImageView
-                        android:visibility="invisible"
-                        android:id="@+id/post_edit_button"
+                    <TextView
+                        android:id="@+id/comment_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/edit_button"
-                        android:layout_weight="25"
-                        android:src="@drawable/ic_edit_white_24dp"/>
+                        android:text="@string/_0_likes"/>
 
-                    <ImageView
-                        android:visibility="invisible"
-                        android:id="@+id/post_delete_button"
-                        android:contentDescription="@string/delete"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="25"
-                        android:src="@drawable/ic_delete_black_24dp"/>
 
                 </LinearLayout>
 

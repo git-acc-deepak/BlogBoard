@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class BlogPostModel extends BlogPostsId{
 
-    public String user_id, image_url, desc, title, thumbnail , search;
+    public String user_id, image_url, desc, title, thumbnail ;
 
     public Date timestamp;
 

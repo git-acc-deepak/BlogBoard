@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -20,18 +19,17 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     public List<User> commenterId;
     public Context context;
 
-    public CommentsAdapter(List<CommentsModel> commentsList , List<User> commenterId){
+    public CommentsAdapter(Context context, List<CommentsModel> commentsList , List<User> commenterId){
 
         this.commentsList = commentsList;
         this.commenterId = commenterId;
-
+        this.context = context;
     }
 
     @Override
     public CommentsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.individual_comment, parent, false);
-        context = parent.getContext();
         return new CommentsAdapter.ViewHolder(view);
     }
 
@@ -89,11 +87,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             commenterImage = mView.findViewById(R.id.comment_image);
 
             commenterName.setText(userName);
-            RequestOptions placeHolder = new RequestOptions();
-            placeHolder.placeholder(R.drawable.post_user_placeholder);
-            Glide.with(context).applyDefaultRequestOptions(placeHolder)
+
+            Glide.with(context)
                     .asBitmap()
                     .load(userImage)
+                    .placeholder(R.drawable.post_user_placeholder)
                     .into(commenterImage);
         }
 

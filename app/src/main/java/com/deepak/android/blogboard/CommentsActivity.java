@@ -1,5 +1,8 @@
 package com.deepak.android.blogboard;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,7 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,14 +42,10 @@ import java.util.Map;
 public class CommentsActivity extends AppCompatActivity {
 
     private EditText commentText;
-    private ImageView sendCommentButton;
     private String blog_post_id;
-    private String blog_user_id;
-
-    private RecyclerView commentListAdapter;
+    private String postsAuthorId;
 
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private String currentUserId;
 
     private ImageView userDp;
@@ -53,6 +54,7 @@ public class CommentsActivity extends AppCompatActivity {
     private ImageView postImage;
     private TextView timestamp;
 
+    private ImageView deleteButton;
 
     private CommentsAdapter commentsAdapter;
     private List<CommentsModel> commentsList;
@@ -68,37 +70,17 @@ public class CommentsActivity extends AppCompatActivity {
         postDescText = findViewById(R.id.desc_of_the_post);
         postImage = findViewById(R.id.image_of_the_post);
         timestamp = findViewById(R.id.post_date);
+        deleteButton = findViewById(R.id.delete_this_post);
 
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null){
             currentUserId = user.getUid();
         }
+        if (getIntent().hasExtra("blog_post_id") ) {
+            blog_post_id = getIntent().getStringExtra("blog_post_id");
+        }
 
-        blog_post_id = getIntent().getStringExtra("blog_post_id");
-/*        blog_user_id = getIntent().getStringExtra("blog_user_id");*/
-
-        //user data retrieval
-       /* db.collection("Users").document(blog_user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                     if (task.getResult().exists()){
-                         String name = task.getResult().getString("name");
-                         userDisplayName.setText(name);
-                         //post date
-
-                         String image = task.getResult().getString("image");
-                         Glide.with(getBaseContext())
-                                 .asBitmap()
-                                 .load(image)
-                                 .placeholder(R.drawable.post_user_placeholder)
-                                 .into(userDp);
-                     }
-                }
-            }
-        });
         //post data retrieval
         db.collection("Posts").document(blog_post_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -111,22 +93,42 @@ public class CommentsActivity extends AppCompatActivity {
                         Glide.with(getBaseContext()).asBitmap().load(imageUrl)
                                 .placeholder(R.drawable.post_placeholder)
                                 .into(postImage);
+                        postsAuthorId = task.getResult().getString("user_id");
+                        enableEditOrDeletePost(postsAuthorId, blog_post_id);
+                        db.collection("Users").document(postsAuthorId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                if (documentSnapshot != null){
+                                    String name = documentSnapshot.getString("name");
+                                    userDisplayName.setText(name);
+                                    //post date
+
+                                    String image = documentSnapshot.getString("image");
+                                    Glide.with(getBaseContext())
+                                            .asBitmap()
+                                            .load(image)
+                                            .placeholder(R.drawable.post_user_placeholder)
+                                            .into(userDp);
+                                }
+                            }
+                        });
+
                     }
                 }
             }
         });
-*/
+
         commentText = findViewById(R.id.comment_input_text);
-        sendCommentButton = findViewById(R.id.comment_post_button);
-        commentListAdapter = findViewById(R.id.comment_list_recycler_view);
+        ImageView sendCommentButton = findViewById(R.id.comment_post_button);
+        RecyclerView commentListRecyclerView = findViewById(R.id.comment_list_recycler_view);
 
         //database comment list
         commenterId = new ArrayList<>();
         commentsList = new ArrayList<>();
-        commentsAdapter = new CommentsAdapter(commentsList, commenterId);
-        commentListAdapter.setHasFixedSize(true);
-        commentListAdapter.setLayoutManager(new LinearLayoutManager(this));
-        commentListAdapter.setAdapter(commentsAdapter);
+        commentsAdapter = new CommentsAdapter(this,commentsList, commenterId);
+        commentListRecyclerView.setHasFixedSize(true);
+        commentListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentListRecyclerView.setAdapter(commentsAdapter);
 
         //comment list retrieval
         db.collection("Posts/" + blog_post_id + "/Comments")
@@ -140,7 +142,6 @@ public class CommentsActivity extends AppCompatActivity {
 
                         if (doc.getType() == DocumentChange.Type.ADDED) {
 
-                            final String commentId = doc.getDocument().getId();
                             final CommentsModel comments = doc.getDocument().toObject(CommentsModel.class);
                             String blogUserId = doc.getDocument().getString("user_id");
                             db.collection("Users").document(blogUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -193,5 +194,40 @@ public class CommentsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void enableEditOrDeletePost(String postsAuthorId, final String post_id) {
+        if (postsAuthorId.equals(currentUserId)) {
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CommentsActivity.this);
+                builder.setTitle("Delete Post")
+                        .setMessage("Are you sure?");
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                       /* Toast.makeText(CommentsActivity.this,"ok clicked", Toast.LENGTH_LONG).show();*/
+                        db.collection("Posts").document(post_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Intent intent = new Intent(CommentsActivity.this,HomeFragment.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
+
     }
 }
