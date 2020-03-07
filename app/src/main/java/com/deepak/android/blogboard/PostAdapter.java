@@ -124,7 +124,7 @@ public class PostAdapter extends RecyclerView.Adapter <PostAdapter.ViewHolder>{
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (!queryDocumentSnapshots.isEmpty()){
                     int count = queryDocumentSnapshots.size();
-                    holder.commentCount.setText(count +" comments");
+                    holder.commentCount.setText(count + " comments");
                 } else {
                     holder.commentCount.setText(0 + " comments");
                 }
@@ -193,9 +193,11 @@ public class PostAdapter extends RecyclerView.Adapter <PostAdapter.ViewHolder>{
     }
 
     private void openPost(String postsId) {
-        Intent intent = new Intent(mContext,CommentsActivity.class);
-        intent.putExtra("blog_post_id", postsId);
-        mContext.startActivity(intent);
+       if (postsId != null){
+           Intent intent = new Intent(mContext,CommentsActivity.class);
+           intent.putExtra("blog_post_id", postsId);
+           mContext.startActivity(intent);
+       }
     }
 
     @Override

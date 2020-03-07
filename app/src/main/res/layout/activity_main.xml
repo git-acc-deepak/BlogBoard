@@ -41,6 +41,7 @@
             android:layout_gravity="bottom"
             app:backgroundTint="@color/skyBlue"
             app:hideOnScroll="true"
+            app:titleTextColor="@color/colorAccent"
             app:layout_scrollFlags="scroll|enterAlways"
             app:fabAlignmentMode="end"
             app:fabCradleMargin="8dp"

@@ -52,7 +52,7 @@ public class SearchFragment extends Fragment {
         postUser = new ArrayList<>();
 
         blogRecyclerAdapter = new PostAdapter(getContext(), postUser, listPost);
-        mSearchResult.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mSearchResult.setLayoutManager(new LinearLayoutManager(getContext()));
         mSearchResult.setAdapter(blogRecyclerAdapter);
 
         db = FirebaseFirestore.getInstance();
@@ -98,18 +98,18 @@ public class SearchFragment extends Fragment {
                                     if (userID != null) {
                                         db.collection("Users").document(userID).get()
                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    User user = task.getResult().toObject(User.class);
-                                                    if (blogPostModel.getTitle() != null && blogPostModel.getTitle().contains(finalQuery)) {
-                                                        listPost.add(blogPostModel);
-                                                        postUser.add(user);
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            User user = task.getResult().toObject(User.class);
+                                                            if (blogPostModel.getTitle() != null && blogPostModel.getTitle().contains(finalQuery)) {
+                                                                listPost.add(blogPostModel);
+                                                                postUser.add(user);
+                                                            }
+                                                            blogRecyclerAdapter.notifyDataSetChanged();
+                                                        }
                                                     }
-                                                    blogRecyclerAdapter.notifyDataSetChanged();
-                                                }
-                                            }
-                                        });
+                                                });
                                     }
 
                                 }

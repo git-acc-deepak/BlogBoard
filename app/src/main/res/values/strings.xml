@@ -32,12 +32,12 @@
     <string name="post_title_text">Post Title here...</string>
     <string name="like_button">like button</string>
     <string name="_0_likes">0</string>
-    <string name="likes">likes</string>
+    <string name="likes"> likes</string>
     <string name="splash_logo_image">Splash Logo Image</string>
     <string name="welcome_to">Welcome to</string>
     <string name="search">Search Topic</string>
     <string name="search_here">Search here</string>
-    <string name="comments">Comments</string>
+    <string name="comments"> comments</string>
     <string name="say_something_nice">Say Something Nice</string>
     <string name="send_button">send button</string>
     <string name="loading_comment">Loading Comment...</string>
@@ -55,4 +55,8 @@
     <string name="send_feedback">Send</string>
     <string name="feedback_here">Feedback here</string>
     <string name="feedback">Feedback</string>
+    <string name="about">About</string>
+    <string name="app_version">App Version</string>
+    <string name="developed_by">Developed By</string>
+    <string name="deepak_saini">Deepak Saini</string>
 </resources>

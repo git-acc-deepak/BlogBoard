@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // to load default fragment when the activity starts.
-        changeFragments(new HomeFragment());
+        if (savedInstanceState == null){
+            changeFragments(new HomeFragment());
+        }
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -137,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_home:
                 changeFragments(homeFragment);
-                getSupportFragmentManager().popBackStackImmediate();
                 return true;
 
             case R.id.action_search:

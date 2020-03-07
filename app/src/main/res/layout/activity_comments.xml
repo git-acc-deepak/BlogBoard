@@ -49,6 +49,7 @@
                 android:id="@+id/post_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:text="@string/date_of_post"
                 android:textColor="@color/content_desc_gray"
                 app:layout_constraintEnd_toEndOf="@+id/publishers_name"
@@ -96,9 +97,17 @@
                     android:id="@+id/is_the_post_liked"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="50"
+                    android:layout_weight="25"
                     android:contentDescription="@string/like_button"
                     android:src="@drawable/ic_like_button" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="25"
+                    android:textColor="@color/white"
+                    android:id="@+id/like_count_field"
+                    android:text="@string/_0_likes"/>
 
 
                 <ImageView

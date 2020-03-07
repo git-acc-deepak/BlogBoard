@@ -33,7 +33,6 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
     private ImageView dp;
     private TextView displayName;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,36 +40,40 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
         NavigationView mNavView = view.findViewById(R.id.navigation_drawer_view);
         TextView userEmail = view.findViewById(R.id.drawer_user_email);
-          displayName = view.findViewById(R.id.drawer_user_name);
-          dp = view.findViewById(R.id.drawer_user_image);
+        displayName = view.findViewById(R.id.drawer_user_name);
+        dp = view.findViewById(R.id.drawer_user_image);
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        //handling on list item clicks
         mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 switch (id){
-                    case R.id.account_logout:
-                        logout();
-                        return true;
+                    case R.id.action_about:
+                        Intent about = new Intent(getContext(), AboutActivity.class);
+                        startActivity(about);
+                        break;
 
                     case R.id.action_settings:
                         Intent settingIntent = new Intent(getContext(),AccountSetup.class);
                         startActivity(settingIntent);
-                        return true;
+                        break;
 
                     case R.id.action_feedback:
                         Intent feedback = new Intent(getContext(),FeedbackActivity.class);
                         startActivity(feedback);
-                        return true;
+                        break;
                 }
+                BottomNavigationDrawerFragment.super.dismiss();
                 return false;
             }
         });
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //setting drawer current user details
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null){
             //getting details
             String email = user.getEmail();
@@ -92,16 +95,5 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
             userEmail.setText(email);
         }
           return view;
-    }
-
-
-    private void logout() {
-        mAuth.signOut();
-        sendToLogin();
-    }
-
-    private void sendToLogin() {
-        Intent intent = new Intent(getContext(),LoginActivity.class);
-        startActivity(intent);
     }
 }
