@@ -15,11 +15,16 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +40,7 @@ public class AccountFragment extends Fragment {
     private CircleImageView userImage;
     private TextView userName;
     private TextView userBio;
+    private FirebaseFirestore db;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -51,9 +57,9 @@ public class AccountFragment extends Fragment {
         Button logoutAction = view.findViewById(R.id.account_logout);
         userAuthEmail = view.findViewById(R.id.user_auth_email);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null){
             userId = user.getUid();
             String email = user.getEmail();
@@ -65,7 +71,6 @@ public class AccountFragment extends Fragment {
             public void onClick(View v) {
                 Intent accountSetupIntent = new Intent(getContext(),AccountSetup.class);
                 startActivity(accountSetupIntent);
-                getActivity().finish();
             }
         });
 
@@ -73,9 +78,16 @@ public class AccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
-                Intent logout = new Intent(getContext(),LoginActivity.class);
-                startActivity(logout);
-                getActivity().finish();
+                Map<String, Object> tokenRemove = new HashMap<>();
+                tokenRemove.put("token", FieldValue.delete());
+                db.collection("Users").document(userId).update(tokenRemove).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Intent logout = new Intent(getContext(), LoginActivity.class);
+                        startActivity(logout);
+                        getActivity().finish();
+                    }
+                });
             }
         });
 

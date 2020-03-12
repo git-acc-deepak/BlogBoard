@@ -85,12 +85,11 @@ public class HomeFragment extends Fragment {
         retrieving data from the database on fire store.
         snapshot listener will help to retrieve data in real time.
          */
-            Query firstQuery = db.collection("Posts")
-                    .orderBy("timestamp", Query.Direction.DESCENDING).limit(5);
-            firstQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            Query firstQuery = db.collection("Posts");
+            firstQuery.orderBy("timestamp", Query.Direction.DESCENDING).limit(5)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-
 
                     if (!queryDocumentSnapshots.isEmpty()) {
 
@@ -151,11 +150,12 @@ public class HomeFragment extends Fragment {
     // method to run second query.
     public void loadMoreBlog(){
 
-        Query secondQuery = db.collection("Posts")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
+        Query secondQuery = db.collection("Posts");
+
+        secondQuery.orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(5)
-                .startAfter(lastVisible);
-        secondQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                .startAfter(lastVisible)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (!queryDocumentSnapshots.isEmpty()) {

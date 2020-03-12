@@ -12,18 +12,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * purpose of this activity is to login the user to app.
+ */
 public class LoginActivity extends AppCompatActivity {
     private TextInputEditText loginEmailText;
     private TextInputEditText loginPasswordText;
     private ProgressBar loginProgress;
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         //initializing objects from layout page.
         loginEmailText = findViewById(R.id.login_email);
@@ -56,13 +68,23 @@ public class LoginActivity extends AppCompatActivity {
                 //checking if any field are not empty.
                 if (!TextUtils.isEmpty(loginEmail) && !TextUtils.isEmpty(loginPassword)){
                     loginProgress.setVisibility(View.VISIBLE);
-
+                    //signing in to app
                     mAuth.signInWithEmailAndPassword(loginEmail, loginPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                             if (task.isSuccessful()){
-                                sendToMainActivity();
+                                //saving device token id for sending notifications in the user collection.
+                                String token_id = FirebaseInstanceId.getInstance().getToken();
+                                Map<String, Object> userMap = new HashMap<>();
+                                userMap.put("token", token_id);
+                                db.collection("Users").document(mAuth.getCurrentUser().getUid())
+                                        .set(userMap, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        sendToMainActivity();
+                                    }
+                                });
                             } else {
                                 // to handle login failure.
                                 String errorMessage = task.getException().getMessage();
@@ -90,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             sendToMainActivity();
         }
     }
+
     private void sendToMainActivity() {
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(mainIntent);

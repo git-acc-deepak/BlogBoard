@@ -92,8 +92,10 @@ public class SearchFragment extends Fragment {
                                 listPost.clear();
 
                                 for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                                    final BlogPostModel blogPostModel = doc.toObject(BlogPostModel.class);
-
+                                    //Assigning Id to each post before retrieving
+                                    String postsID = doc.getId();
+                                    final BlogPostModel blogPostModel = doc.toObject(BlogPostModel.class).withId(postsID);
+                                    //retrieving user id as well.
                                     String userID = doc.getString("user_id");
                                     if (userID != null) {
                                         db.collection("Users").document(userID).get()

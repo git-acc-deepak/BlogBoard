@@ -108,7 +108,7 @@ public class CommentsActivity extends AppCompatActivity {
                            postsAuthorId = task.getResult().getString("user_id");
                            assert postsAuthorId != null;
                            enableEditOrDeletePost(postsAuthorId, blog_post_id);
-                           db.collection("Users").document(postsAuthorId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                           db.collection("Users").document(postsAuthorId).addSnapshotListener(CommentsActivity.this, new EventListener<DocumentSnapshot>() {
                                @Override
                                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                                    if (documentSnapshot != null){
@@ -211,24 +211,29 @@ public class CommentsActivity extends AppCompatActivity {
 
     private void postLikesCount(final String blog_post_id) {
         //checking if already liked.
-        db.collection("Posts/" + blog_post_id + "/Likes")
-                .document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (!task.getResult().exists()) {
-                    Map<String, Object> isLiked = new HashMap<>();
-                    isLiked.put("likes", FieldValue.serverTimestamp());
-                    db.collection("Posts/" + blog_post_id + "/Likes")
-                            .document(currentUserId).set(isLiked);
-                } else {
-                    db.collection("Posts/" + blog_post_id + "/Likes")
-                            .document(currentUserId).delete();
-                }
+            public void onClick(View v) {
+                db.collection("Posts/" + blog_post_id + "/Likes")
+                        .document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (!task.getResult().exists()) {
+                            Map<String, Object> isLiked = new HashMap<>();
+                            isLiked.put("likes", FieldValue.serverTimestamp());
+                            db.collection("Posts/" + blog_post_id + "/Likes")
+                                    .document(currentUserId).set(isLiked);
+                        } else {
+                            db.collection("Posts/" + blog_post_id + "/Likes")
+                                    .document(currentUserId).delete();
+                        }
+                    }
+                });
             }
         });
         //changing icon
         db.collection("Posts/" + blog_post_id + "/Likes")
-                .document(currentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                .document(currentUserId).addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -244,7 +249,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
         // counting likes
-        db.collection("Posts/" + blog_post_id + "/Likes").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Posts/" + blog_post_id + "/Likes").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (!queryDocumentSnapshots.isEmpty()){

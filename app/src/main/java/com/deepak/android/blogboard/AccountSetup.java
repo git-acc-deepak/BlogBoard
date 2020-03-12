@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -56,6 +57,7 @@ public class AccountSetup extends AppCompatActivity {
     private Uri mainImageUri = null;
     private String userId;
     private boolean isChanged = false;
+    private String token_id;
 
     private StorageReference mStorageRef;
     private FirebaseFirestore db;
@@ -164,30 +166,16 @@ public class AccountSetup extends AppCompatActivity {
 
                         try {
 
-
-
                             compressedImageFile = new Compressor(AccountSetup.this)
-
                                     .setMaxHeight(125)
-
                                     .setMaxWidth(125)
-
                                     .setQuality(50)
-
                                     .compressToBitmap(newImageFile);
-
-
-
                         } catch (IOException e) {
-
                             e.printStackTrace();
-
                         }
 
-
-
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
                         compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
                         byte[] thumbData = baos.toByteArray();
@@ -226,40 +214,33 @@ public class AccountSetup extends AppCompatActivity {
      database storage task added to separate method to upload data only when it is changed
      and the method will be called only when the change occur.
      */
-    private void storeToDatabase(Uri uri, String userName ,String userBio) {
-        Uri downloadUri;
+    private void storeToDatabase(Uri uri, final String userName, final String userBio) {
+        final Uri downloadUri;
         if (uri != null) {
-
             downloadUri = uri;
-
         } else {
-
             downloadUri = mainImageUri;
-
         }
+        token_id = FirebaseInstanceId.getInstance().getToken();
         Map<String, String> userMap = new HashMap<>();
         userMap.put("name", userName);
         userMap.put("bio", userBio);
         userMap.put("image", downloadUri.toString());
+        userMap.put("token", token_id);
         //uploading to database collection.
         db.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 if (task.isSuccessful()) {
-
                     Toast.makeText(AccountSetup.this, "Settings Updated.", Toast.LENGTH_LONG).show();
                     Intent homeIntent = new Intent(AccountSetup.this, MainActivity.class);
                     startActivity(homeIntent);
                     finish();
-
                 } else {
-
                     String error = task.getException().getMessage();
                     Toast.makeText(AccountSetup.this, "Database ERROR:" + error, Toast.LENGTH_LONG).show();
-
                 }
-
                 settingUpdateProgress.setVisibility(View.INVISIBLE);
             }
         });
