@@ -65,6 +65,11 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                         startActivity(about);
                         break;
 
+                    case R.id.action_view_all_users:
+                        Intent viewPeople = new Intent(getContext(), PeopleActivity.class);
+                        startActivity(viewPeople);
+                        break;
+
                     case R.id.action_settings:
                         Intent settingIntent = new Intent(getContext(),AccountSetup.class);
                         startActivity(settingIntent);

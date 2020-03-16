@@ -94,7 +94,7 @@ public class PostAdapter extends RecyclerView.Adapter <PostAdapter.ViewHolder>{
         holder.setPostImage(image_url, thumbnail);
         
         //setting user details
-        String userName = userList.get(position).getName();
+        final String userName = userList.get(position).getName();
         String userImage = userList.get(position).getImage();
         holder.setUserInfo(userName, userImage);
 
@@ -105,16 +105,29 @@ public class PostAdapter extends RecyclerView.Adapter <PostAdapter.ViewHolder>{
 
         // opening post for comments or viewing
 
-            holder.comment_button.setOnClickListener(new View.OnClickListener() {
+        holder.comment_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                    openPost(postsId);
                 }
             });
+
         holder.blogImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openPost(postsId);
+            }
+        });
+
+        //opening message on profile image click.
+        final String userId = postList.get(position).getUser_id();
+        holder.blogAuthorImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SendMessageActivity.class);
+                intent.putExtra("userId", userId);
+                intent.putExtra("userName", userName);
+                mContext.startActivity(intent);
             }
         });
 
@@ -182,7 +195,7 @@ public class PostAdapter extends RecyclerView.Adapter <PostAdapter.ViewHolder>{
         db.collection("Posts/" + postsId + "/Likes").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-               if (!queryDocumentSnapshots.isEmpty()){
+                if (queryDocumentSnapshots != null) {
                    int count = queryDocumentSnapshots.size();
                    holder.likesCount.setText(count + " likes");
                } else {

@@ -13,12 +13,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AboutActivity"
+
+        <activity
+            android:name=".SendMessageActivity"
+            android:parentActivityName=".PeopleActivity" />
+        <activity
+            android:name=".PeopleActivity"
             android:parentActivityName=".MainActivity"/>
-        <activity android:name=".FeedbackActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".CommentsActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".FeedbackActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".CommentsActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SplashActivity"
             android:noHistory="true">
@@ -34,8 +44,9 @@
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".AccountSetup"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".AccountSetup"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity

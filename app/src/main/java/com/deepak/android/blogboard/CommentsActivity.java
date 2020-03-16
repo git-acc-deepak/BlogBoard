@@ -22,7 +22,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -79,10 +78,7 @@ public class CommentsActivity extends AppCompatActivity {
         likeCount = findViewById(R.id.like_count_field);
 
         db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null){
-            currentUserId = user.getUid();
-        }
+        currentUserId = FirebaseAuth.getInstance().getUid();
         if (getIntent().hasExtra("blog_post_id") ) {
             blog_post_id = getIntent().getStringExtra("blog_post_id");
         }
@@ -130,7 +126,7 @@ public class CommentsActivity extends AppCompatActivity {
                }
            });
 
-
+        //comment views init.
         commentText = findViewById(R.id.comment_input_text);
         ImageView sendCommentButton = findViewById(R.id.comment_post_button);
         RecyclerView commentListRecyclerView = findViewById(R.id.comment_list_recycler_view);

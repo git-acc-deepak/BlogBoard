@@ -21,8 +21,6 @@
     <string name="click_to_add_image">click to add image.</string>
     <string name="click_button_to_add_image"><![CDATA[Click To Add Image ->]]></string>
     <string name="add_new_post_header">Post Something</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="post_author_name">Deepak</string>
     <string name="date_of_post">yesterday</string>
@@ -59,4 +57,7 @@
     <string name="app_version">App Version</string>
     <string name="developed_by">Developed By</string>
     <string name="deepak_saini">Deepak Saini</string>
+    <string name="show_all_users">People</string>
+    <string name="say_something">say something</string>
+    <string name="chat_text">Chat</string>
 </resources>

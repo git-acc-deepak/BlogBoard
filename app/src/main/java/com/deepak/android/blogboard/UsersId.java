@@ -4,16 +4,14 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.annotations.NotNull;
 
 /**
- * to return post id.
+ * to return user id.
  */
-public class BlogPostsId {
+public class UsersId {
     @Exclude
-    public String BlogPostsId;
+    public String UserId;
 
-    public <T extends BlogPostsId> T withId(@NotNull final String id) {
-        this.BlogPostsId = id;
+    public <T extends UsersId> T withId(@NotNull final String id) {
+        this.UserId = id;
         return (T) this;
     }
-
-
 }
