@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         app:title="@string/add_new_post_header"
         android:textAlignment="center"
+        android:elevation="10dp"
         app:titleTextColor="@color/colorAccent"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"

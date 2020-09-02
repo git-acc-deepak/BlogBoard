@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#262629</color>
+    <color name="colorPrimary">#000033</color>
     <color name="colorPrimaryDark">#363640</color>
     <color name="colorAccent">#FFCA18</color>
     <color name="background">#363640</color>
     <color name="white">#ffffff</color>
     <color name="splash_background">#4B7999</color>
-    <color name="skyBlue">#87ceeb</color>
+    <color name="skyBlue">#000033</color>
     <color name="content_desc_gray">#9A9999</color>
 </resources>

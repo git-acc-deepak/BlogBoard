@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,7 +38,6 @@ public class HomeFragment extends Fragment {
     private List<User> userList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private ProgressBar mProgress;
     private PostAdapter blogRecyclerAdapter;
     private DocumentSnapshot lastVisible;
     private Boolean isFirstPageFirstLoad = true;
@@ -54,8 +52,6 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        mProgress = view.findViewById(R.id.loading_posts);
 
         //array list to hold blog list items
         blogList = new ArrayList<>();
@@ -94,11 +90,10 @@ public class HomeFragment extends Fragment {
                     .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    mProgress.setVisibility(View.VISIBLE);
+
                     if (!queryDocumentSnapshots.isEmpty()) {
 
                         if (isFirstPageFirstLoad){
-
                             lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
                             blogList.clear();
                             userList.clear();
@@ -146,7 +141,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
             });
-            mProgress.setVisibility(View.INVISIBLE);
+
         }
             return view;
     }
@@ -156,14 +151,12 @@ public class HomeFragment extends Fragment {
     public void loadMoreBlog(){
 
         Query secondQuery = db.collection("Posts");
-
         secondQuery.orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(5)
                 .startAfter(lastVisible)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                mProgress.setVisibility(View.VISIBLE);
                 if (!queryDocumentSnapshots.isEmpty()) {
                     lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
                     for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
@@ -198,8 +191,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
-        mProgress.setVisibility(View.INVISIBLE);
     }
 
 }

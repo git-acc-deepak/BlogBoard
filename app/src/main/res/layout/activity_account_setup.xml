@@ -29,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:elevation="10dp"
         app:titleTextColor="@color/colorAccent"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"

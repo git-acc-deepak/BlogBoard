@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private SearchFragment searchFragment;
     private NotificationsFragment notificationsFragment;
     private AccountFragment accountFragment;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,19 +97,18 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null){
          sendToLogin();
         }else {
-            String currentUserId = mAuth.getCurrentUser().getUid();
+            currentUserId = currentUser.getUid();
+            Log.d(TAG, "onStart: user id: " + currentUserId);
             db.collection("Users").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
 
-                        if (!task.getResult().exists()){
-
+                        if (!task.getResult().exists()) {
                             Intent accountSettings = new Intent(MainActivity.this, AccountSetup.class);
                             startActivity(accountSettings);
                             finish();
-
                         }
                     }else {
                         String error = task.getException().getMessage();
@@ -172,8 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private void changeFragments(Fragment fragment){
         FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = manager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment)
-            .addToBackStack(null)
-            .commit();
+        fragmentTransaction.replace(R.id.fragment_container_view_tag, fragment)
+                .commit();
     }
 }
